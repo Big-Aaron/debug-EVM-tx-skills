@@ -1,0 +1,16 @@
+# macOS
+.DS_Store
+
+# Editor-local workspace settings
+.vscode/
+
+# Claude Code local-only settings
+.claude/
+
+# Local history snapshots
+.history/
+
+# Common temporary files
+*.log
+*.swp
+*.swo
