@@ -1,6 +1,6 @@
 # RPC Playbook
 
-这份手册描述 `debug-tx` skill 在执行时应遵循的最小依赖策略。
+这份手册描述 `debug-EVM-tx-skills` skill 在执行时应遵循的最小依赖策略。
 
 ## 一、推荐能力分层
 

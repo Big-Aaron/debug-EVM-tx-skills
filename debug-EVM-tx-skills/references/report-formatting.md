@@ -1,6 +1,6 @@
 ---
 name: report-formatting
-description: Output format template for the debug-tx skill. Defines how to present transaction failure analysis to non-technical users.
+description: Output format template for the debug-EVM-tx-skills skill. Defines how to present transaction failure analysis to non-technical users.
 ---
 
 # Report Format
@@ -90,12 +90,12 @@ Present findings in the following structure. The entire report must be understan
 1. **Language**: Match the user's language. Default to Chinese if user communicates in Chinese.
 2. **No raw hex in main sections**: All hex values (addresses, calldata, selectors) should only appear in the technical details section. In main sections, use human-readable names.
 3. **Analogies**: Use everyday analogies to explain blockchain concepts:
-   - Allowance/Approval → "授权" / "就像银行转账权限"
-   - Gas → "手续费" / "就像汽车需要汽油才能跑"
-   - Slippage → "滑点" / "就像市场价格的波动"
-   - Revert → "回滚" / "交易被取消，就像ATM吐出你的卡说交易失败"
-   - Smart Contract → "智能合约" / "链上的自动化程序"
-   - Token Balance → "代币余额" / "你在这个代币上的存款"
+  - Allowance/Approval -> "授权" / "就像银行转账权限"
+  - Gas -> "手续费" / "就像汽车需要汽油才能跑"
+  - Slippage -> "滑点" / "就像市场价格的波动"
+  - Revert -> "回滚" / "交易被取消，需要重新处理"
+  - Smart Contract -> "智能合约" / "链上的自动化程序"
+  - Token Balance -> "代币余额" / "你在这个代币上的存款"
 4. **Actionable suggestions**: Every suggestion must be something the user can actually do. Don't suggest "check the contract source code" — instead suggest specific wallet actions.
 5. **Addresses**: When possible, label addresses with known names (Uniswap Router, USDT, WETH, etc.).
 6. **Amounts**: Convert wei to human-readable units (ETH, GWEI). For token amounts, respect the token's decimals.

@@ -1,27 +1,28 @@
 # CLAUDE.md
 
-Instructions for Claude when contributing to this skill.
+Instructions for Claude when contributing to this repository.
 
-## What This Skill Is
+## What This Repo Is
 
-An EVM transaction failure debugger. It helps non-technical users understand why their on-chain transactions failed or why off-chain pre-execution simulations reverted.
+A single-skill repository for `debug-EVM-tx-skills`, a Claude Code skill that helps non-technical users understand why their on-chain transactions failed or why off-chain pre-execution simulations reverted.
 
 ## Structure
 
 ```
-debug-EVM-tx-skills/
-├── CLAUDE.md              # This file
-├── SKILL.md               # Main orchestration & analysis logic
-├── VERSION                # Semantic version
-├── README.md              # User documentation
-└── references/
-    ├── common-errors.md   # Error signatures & revert reason database
-    ├── tools-guide.md     # cast, heimdall, dedaub usage reference
-    └── report-formatting.md  # Output format for non-technical users
+debug-EVM-tx-skills/       # Installable skill package
+CONTRIBUTING.md
+SECURITY.md
+CODE_OF_CONDUCT.md
+LICENSE
+CLAUDE.md                  # This file
+README.md                  # Repository entry point
 ```
 
 ## Rules
 
+- One skill, one purpose.
+- `debug-EVM-tx-skills/SKILL.md` is the runtime entrypoint.
+- The skill package is self-contained; keep supporting references inside `debug-EVM-tx-skills/references/`.
 - Target audience is non-technical users — all output must be in plain language.
 - Minimize external tool dependencies — prefer JSON RPC via curl or cast.
 - Only use Foundry (cast), Heimdall, and Dedaub as external tools.

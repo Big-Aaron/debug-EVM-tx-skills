@@ -1,63 +1,83 @@
 # debug-EVM-tx-skills
 
-这是一个面向 Claude Code 的 EVM 失败交易诊断 skill 仓库，运行时 skill 名称为 `debug-tx`，用来帮助用户用通俗语言理解以下问题：
+> Claude Code skill for explaining failed EVM transactions and reverted simulations in plain language.
 
-- 链上交易为什么失败
-- 钱包模拟为什么报 `execution reverted` 或 `estimateGas failed`
-- calldata 实际在调用什么
-- revert reason、panic code、custom error 分别意味着什么
+[License: MIT](./LICENSE) · [Contributing](./CONTRIBUTING.md) · [Security](./SECURITY.md)
 
-这个仓库参考 Claude Code 官方 skills 文档的组织方式整理：
+---
 
-- 根目录 `README.md` 作为对外入口
-- 根目录 `SKILL.md` 只保留仓库概览
-- `.claude/skills/debug-tx/` 作为实际安装和运行时使用的 skill 目录
-- 根目录 `references/` 作为文档单一来源
-- `.claude/skills/debug-tx/references/` 作为安装包内的同步副本
+## Install & Run
 
-下面涉及仓库路径的示例统一使用当前仓库目录名 `debug-EVM-tx-skills`；实际 skill 目录和调用命令仍然保持为 `debug-tx`。
+AI CLI（Claude Code / Codex / Cursor chat 等）：
 
-## 仓库结构
+直接粘贴下面的提示词安装：
 
 ```text
-debug-EVM-tx-skills/
-├── .claude/
-│   └── skills/
-│       └── debug-tx/
-│           └── SKILL.md
-├── CLAUDE.md
-├── README.md
-├── SKILL.md
-├── VERSION
-└── references/
-	├── common-errors.md
-	├── report-formatting.md
-	├── setup-and-install.md
-	└── tools-guide.md
+Install skill https://github.com/Big-Aaron/debug-EVM-tx-skills/
 ```
 
-## 适用场景
+安装后可直接这样调用：
 
-- 输入一笔失败交易的 hash，要求解释失败原因
-- 输入一段 `to` + `data` + `from`，要求定位模拟失败原因
-- 输入钱包或前端报错，要求判断是余额、授权、滑点、Gas 还是权限问题
-- 输入浏览器链接，要求先识别链，再继续分析
+```text
+run debug-EVM-tx-skills on transaction 0x1234...abcd on ethereum
+```
+
+```text
+run debug-EVM-tx-skills on calldata 0xa9059cbb... to 0xdAC17F958D2ee523a2206206994597C13D831ec7 from 0x... on base
+```
+
+```text
+/debug-EVM-tx-skills https://etherscan.io/tx/0x1234...abcd
+```
+
+更新到最新版本时，直接粘贴：
+
+```text
+update the debug-EVM-tx-skills skill to latest version from https://github.com/Big-Aaron/debug-EVM-tx-skills/
+```
+
+如果你更喜欢手动安装到本地 Claude skills 目录，也可以直接复制仓库中的 [debug-EVM-tx-skills](./debug-EVM-tx-skills/) 目录。完整步骤见 [debug-EVM-tx-skills/references/setup-and-install.md](./debug-EVM-tx-skills/references/setup-and-install.md)。
+
+---
+
+## Skills
+
+| Skill | Description |
+| --- | --- |
+| [debug-EVM-tx-skills](./debug-EVM-tx-skills/) | Diagnose failed EVM transactions, reverted wallet simulations, and `estimateGas` failures in plain language. |
+
+---
+
+## 这个 skill 解决什么问题
+
+- 链上交易为什么失败
+- 钱包为什么提示 `execution reverted` 或 `estimateGas failed`
+- 一段 calldata 实际调用了什么函数
+- revert reason、panic code、custom error 分别意味着什么
+- 没有源码时还能定位到什么程度
+
+## 工作方式
+
+1. 识别输入类型：tx hash、浏览器链接、钱包报错，或 calldata 模拟。
+2. 先确认链，再从 Chainlist 选择 RPC。
+3. 通过 RPC 获取交易、回执和区块事实。
+4. 链上失败交易优先使用 `cast run`。
+5. 必要时使用 `cast call`，并固定到失败交易前一个区块。
+6. 把底层技术原因翻译成非技术用户能理解的结论和建议。
 
 ## 依赖要求
 
-### 必需
+必需：
 
 - Claude Code
 - Foundry stable 版本
 
-### 推荐
+推荐：
 
 - Heimdall
-- Dedaub 账号或可访问其网页版
+- Dedaub 网页版
 
-## Foundry 安装要求
-
-这个 skill 依赖 `cast` 做 RPC 读取、交易重放和本地模拟，因此要求用户安装 **Foundry stable**，不要默认使用 nightly。
+Foundry 安装建议：
 
 ```bash
 curl -L https://foundry.paradigm.xyz | bash
@@ -65,101 +85,48 @@ foundryup --install stable
 cast --version
 ```
 
-如果本机已经装过 Foundry，也建议显式切到 stable：
-
-```bash
-foundryup --install stable
-```
-
-## 从 GitHub 下载并安装到本地
-
-推荐先克隆仓库，再把其中的 skill 目录复制到 Claude Code 的个人 skills 目录。
-
-```bash
-git clone <YOUR_GITHUB_REPO_URL>
-cd debug-EVM-tx-skills
-
-mkdir -p ~/.claude/skills
-cp -R ./.claude/skills/debug-tx ~/.claude/skills/debug-tx
-```
-
-安装完成后，在任意项目目录启动 Claude Code，直接调用：
+## 仓库布局
 
 ```text
-/debug-tx 0x1234...abcd on ethereum
+debug-EVM-tx-skills/
+├── .github/                   # Issue / PR 模板
+├── debug-EVM-tx-skills/       # 可安装 skill 包
+│   ├── SKILL.md
+│   ├── VERSION
+│   └── references/
+├── CODE_OF_CONDUCT.md
+├── CONTRIBUTING.md
+├── LICENSE
+├── SECURITY.md
+├── CLAUDE.md
+├── README.md
+└── .gitignore
 ```
 
-也可以先问：
+## 仓库说明
 
-```text
-What skills are available?
-```
+这个仓库现在按 [pashov/skills](https://github.com/pashov/skills) 的单-skill 公开仓库方式组织：
 
-如果你想只在当前项目内使用，而不是全局安装，则复制到当前项目的 `.claude/skills/`：
+- 根目录保留 README、CLAUDE 和社区文件
+- 实际 skill 包直接放在根目录下的同名目录里
+- 引用资料随 skill 包一起发布，不再保留根目录 `references/`
+- 不再保留仓库内 `.claude` 镜像或同步脚本
 
-```bash
-mkdir -p ./.claude/skills
-cp -R ./.claude/skills/debug-tx ./.claude/skills/debug-tx
-```
-
-更详细的本地安装、更新和验证步骤见 [references/setup-and-install.md](./references/setup-and-install.md)。
-
-## 快速使用
-
-### 调试链上失败交易
-
-```text
-/debug-tx 0x1234...abcd on ethereum
-/debug-tx https://etherscan.io/tx/0x1234...abcd
-```
-
-### 调试链下预执行失败
-
-```text
-/debug-tx calldata 0xa9059cbb... to 0xdAC17F958D2ee523a2206206994597C13D831ec7 from 0x... on ethereum
-```
-
-## 工作方式
-
-1. 先识别输入类型：tx hash、浏览器链接，或 calldata 模拟
-2. 先确认链，再从 Chainlist 选择 RPC
-3. 通过 RPC 获取交易、回执和区块上下文
-4. 优先用 `cast run` 重放链上失败交易
-5. 必要时用 `cast call` 在 `blockNumber - 1` 上做本地模拟
-6. 把 revert reason 和底层错误翻译成非技术用户能理解的话
-
-## 支持链
-
-Ethereum、Polygon、Arbitrum、Optimism、Base、BSC、Avalanche、Gnosis、Fantom、zkSync、Linea、Scroll、Blast、Mantle、Celo。
-
-只要用户能提供链名并且 Chainlist 上有可用 RPC，也可以扩展到其他 EVM 链。
+当前 skill 名称和目录名都使用 `debug-EVM-tx-skills`，不再使用旧的 `debug-tx` 名称。
 
 ## 参考资料
 
-- [SKILL.md](./SKILL.md): 仓库级概览与维护约定
-- [references/setup-and-install.md](./references/setup-and-install.md): 本地安装、升级与验证步骤
-- [references/tools-guide.md](./references/tools-guide.md): Foundry、Heimdall、Dedaub 使用说明
-- [references/rpc-playbook.md](./references/rpc-playbook.md): RPC 选择与调试流程手册
-- [references/common-errors.md](./references/common-errors.md): 常见 revert reason 与 plain-language 解释
-- [references/report-formatting.md](./references/report-formatting.md): 输出格式模板
+- [debug-EVM-tx-skills/SKILL.md](./debug-EVM-tx-skills/SKILL.md): 实际运行时 skill 说明
+- [debug-EVM-tx-skills/references/setup-and-install.md](./debug-EVM-tx-skills/references/setup-and-install.md): 本地安装、升级与验证步骤
+- [debug-EVM-tx-skills/references/rpc-playbook.md](./debug-EVM-tx-skills/references/rpc-playbook.md): RPC 选择与调试流程手册
+- [debug-EVM-tx-skills/references/tools-guide.md](./debug-EVM-tx-skills/references/tools-guide.md): Foundry、Heimdall、Dedaub 使用说明
+- [debug-EVM-tx-skills/references/common-errors.md](./debug-EVM-tx-skills/references/common-errors.md): 常见 revert reason 与 plain-language 解释
+- [debug-EVM-tx-skills/references/report-formatting.md](./debug-EVM-tx-skills/references/report-formatting.md): 输出格式模板
 
-## 维护说明
+---
 
-为了减少重复维护，仓库现在采用单一来源约定：
+## Contributing · Security · License
 
-1. `.claude/skills/debug-tx/SKILL.md` 是运行时入口
-2. 根目录 `references/` 是详细文档源文件
-3. `.claude/skills/debug-tx/references/` 通过 `scripts/sync-skill-assets.sh` 从根目录 `references/` 同步
+欢迎改进和修复。提交流程见 [CONTRIBUTING.md](./CONTRIBUTING.md)。
 
-如果你修改了根目录 `references/`，发布前执行：
-
-```bash
-./scripts/sync-skill-assets.sh
-```
-
-## 发布到 GitHub 前建议
-
-1. 把仓库地址替换到安装示例中的 `<YOUR_GITHUB_REPO_URL>`。
-2. 如果改过根目录 `references/`，执行一次 `./scripts/sync-skill-assets.sh`。
-3. 确认 `foundryup --install stable` 仍然是你希望用户遵循的安装要求。
-4. 推送后，按安装步骤在一台干净环境里实际验证一次。
+安全问题请参考 [SECURITY.md](./SECURITY.md)。社区协作规范见 [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md)。仓库采用 [MIT](./LICENSE) 许可。
