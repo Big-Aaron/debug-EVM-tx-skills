@@ -56,7 +56,8 @@ This skill is self-contained. Use the local `references/` directory inside the i
 - Transaction facts, receipts, blocks, balances, nonces, and code existence checks must come from RPC.
 - Chainlist is the source of truth for public RPC candidates.
 - A user-provided RPC can be treated as a hint, not as an automatic final choice.
-- For on-chain failed transactions, prefer `cast run`.
+- For on-chain failed transactions, use `cast run` as the default local replay path.
+- If the failed transaction's order within its block is greater than 30, skip `cast run`, fetch the original transaction parameters through JSON-RPC, and simulate with `cast call` on `blockNumber - 1`.
 - If `cast run` is unavailable, times out, or cannot access history, fall back to `cast call` using the original transaction parameters and the previous block.
 - Any simulation of a chain-confirmed failed transaction must use `blockNumber - 1`, never `latest`.
 - Use `cast to-hex` and `cast to-dec` for base conversion.
@@ -116,8 +117,10 @@ Do not treat block explorer text as the primary evidence source.
 
 For chain-confirmed failed transactions:
 
-- First try `cast run <TX_HASH> --rpc-url <RPC_URL>`.
-- If `cast run` is not viable, use `cast call` with the original transaction inputs and `--block <blockNumber - 1>`.
+- First determine the transaction's order within the block from RPC data such as `transactionIndex`.
+- If the order is 30 or less, try `cast run <TX_HASH> --rpc-url <RPC_URL>`.
+- If the order is greater than 30, fetch the original transaction parameters through JSON-RPC and use `cast call` with those inputs and `--block <blockNumber - 1>`.
+- If `cast run` is not viable, use the same JSON-RPC sourced transaction parameters with `cast call` and `--block <blockNumber - 1>`.
 
 For pre-execution failures:
 

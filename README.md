@@ -61,8 +61,8 @@ update the debug-EVM-tx-skills skill to latest version from https://github.com/B
 1. 识别输入类型：tx hash、浏览器链接、钱包报错，或 calldata 模拟。
 2. 先确认链，再从 Chainlist 选择 RPC。
 3. 通过 RPC 获取交易、回执和区块事实。
-4. 链上失败交易优先使用 `cast run`。
-5. 必要时使用 `cast call`，并固定到失败交易前一个区块。
+4. 链上失败交易默认使用 `cast run` 本地重放；如果交易在区块内顺序大于 30，则改为先用 JSON-RPC 取原交易参数。
+5. 需要走 `cast call` 时，固定使用失败交易前一个区块，也就是 `blockNumber - 1`。
 6. 把底层技术原因翻译成非技术用户能理解的结论和建议。
 
 ## 依赖要求

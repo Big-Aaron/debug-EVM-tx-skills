@@ -30,13 +30,18 @@ cast receipt <TX_HASH> --rpc-url <RPC_URL> --json
 ### Transaction Replay & Simulation
 
 ```bash
-# Replay a failed tx to get revert reason (use the same block)
+# Default path for a chain-confirmed failed tx: full local replay
+cast run <TX_HASH> --rpc-url <RPC_URL> 2>&1
+
+# If the tx order within the block is greater than 30,
+# first fetch the original tx via JSON-RPC, then approximate it with cast call
+# on the previous block using the original parameters
 cast call <TO> <CALLDATA> \
   --from <FROM> \
   --value <VALUE> \
   --gas-limit <GAS_LIMIT> \
   --rpc-url <RPC_URL> \
-  --block <BLOCK_NUMBER> \
+  --block <BLOCK_NUMBER_MINUS_1> \
   2>&1
 
 # Simulate a new call
@@ -67,6 +72,8 @@ cast run <TX_HASH> --rpc-url <RPC_URL> 2>&1
 # Note: Not all RPC providers support debug_traceTransaction
 # Providers that support it: Alchemy, QuickNode, Infura (paid plans)
 # Public RPCs usually do NOT support it
+# If the tx order within the block is greater than 30, prefer JSON-RPC + cast call
+# on blockNumber - 1 instead of cast run
 ```
 
 ### Calldata Decoding
