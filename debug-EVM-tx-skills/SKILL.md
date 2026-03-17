@@ -61,6 +61,7 @@ This skill is self-contained. Use the local `references/` directory inside the i
 - If `cast run` is unavailable, times out, or cannot access history, fall back to `cast call` using the original transaction parameters and the previous block.
 - Any simulation of a chain-confirmed failed transaction must use `blockNumber - 1`, never `latest`.
 - Use `cast to-hex` and `cast to-dec` for base conversion.
+- For calldata, function, and selector lookups, try `cast 4byte` or `cast 4byte-decode` first; if they return no match or fail because the lookup service is unreachable, and Heimdall is installed, try Heimdall before declaring the signature unresolved.
 - Only use Heimdall or Dedaub when RPC evidence and `cast` are insufficient.
 - Do not overstate certainty when the evidence is partial.
 
@@ -131,6 +132,7 @@ For pre-execution failures:
 Check, in order:
 
 1. Revert string or decoded custom error
+	If `cast 4byte` or `cast 4byte-decode` cannot resolve a selector or calldata because there is no match or the network lookup fails, retry with Heimdall when it is installed and sufficient calldata or contract context is available.
 2. Panic code
 3. Out-of-gas pattern
 4. Insufficient balance

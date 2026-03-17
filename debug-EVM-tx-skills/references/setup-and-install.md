@@ -54,7 +54,7 @@ cast --version
 
 ### Heimdall
 
-Heimdall 不是每次都必须，但遇到未验证合约时很有帮助。可按官方仓库说明单独安装。
+Heimdall 不是每次都必须，但遇到未验证合约、`cast 4byte` / `cast 4byte-decode` 未命中，或者 4byte 在线查询访问失败时很有帮助。可按官方仓库说明单独安装。
 
 验证方式：
 

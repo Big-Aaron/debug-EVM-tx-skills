@@ -176,7 +176,7 @@ description: Database of common EVM revert reasons, panic codes, custom errors, 
 
 ## 9. Common Custom Error Selectors (4byte)
 
-These are frequently seen custom error selectors. If you encounter an unknown selector, use `cast 4byte <selector>` to look it up.
+These are frequently seen custom error selectors. If you encounter an unknown selector, use `cast 4byte <selector>` to look it up first. If that lookup returns no match, or fails because the 4byte service cannot be reached, and you have Heimdall installed plus enough calldata or contract context, retry with Heimdall before concluding the selector is unknown.
 
 | Selector | Likely Error | Plain Language |
 |----------|-------------|----------------|

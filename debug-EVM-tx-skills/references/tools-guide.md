@@ -79,7 +79,7 @@ cast run <TX_HASH> --rpc-url <RPC_URL> 2>&1
 ### Calldata Decoding
 
 ```bash
-# Decode using 4byte.directory (online lookup)
+# First try 4byte.directory via cast (online lookup)
 cast 4byte-decode <CALLDATA>
 
 # Decode a function selector
@@ -88,6 +88,13 @@ cast 4byte <SELECTOR>
 
 # Decode error data
 cast 4byte <ERROR_SELECTOR>
+
+# If cast returns no match, or the lookup fails because the network request
+# cannot reach the 4byte service, and Heimdall is installed, retry with Heimdall.
+# Heimdall works best when you have full calldata, and even better when you also
+# know the target contract address.
+heimdall decode <CALLDATA> --rpc-url <RPC_URL> --target <CONTRACT_ADDRESS>
+heimdall decode <CALLDATA>
 
 # ABI-decode specific types
 cast abi-decode "functionName(type1,type2)" <DATA>
@@ -98,6 +105,12 @@ cast abi-decode "Panic(uint256)" <DATA_WITHOUT_SELECTOR>
 cast interface <CONTRACT_ADDRESS> --chain <CHAIN_NAME>
 # CHAIN_NAME: mainnet, polygon, arbitrum, optimism, base, bsc, etc.
 ```
+
+Fallback guidance:
+
+- Prefer `cast 4byte` and `cast 4byte-decode` for the first lookup because they are fast and simple.
+- If the lookup comes back empty, or the 4byte service is unreachable, retry with `heimdall decode` when Heimdall is installed.
+- If you only have a bare 4-byte selector and no calldata or contract context, Heimdall may still be insufficient; report that the selector remains unresolved instead of overclaiming.
 
 ### Balance & State Queries
 
